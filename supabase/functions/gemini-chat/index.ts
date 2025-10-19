@@ -56,13 +56,21 @@ Deno.serve(async (req: Request) => {
       msg && msg.role && msg.parts && msg.parts.length > 0
     );
 
-    const contents = [
+    // For first message, send simple content
+    const contents = cleanHistory.length === 0 ? [
+      {
+        role: "user",
+        parts: [{ text: message }],
+      },
+    ] : [
       ...cleanHistory,
       {
         role: "user",
         parts: [{ text: message }],
       },
     ];
+
+    console.log("Sending to Gemini:", JSON.stringify(contents, null, 2));
 
     const response = await fetch(apiUrl, {
       method: "POST",
@@ -83,8 +91,14 @@ Deno.serve(async (req: Request) => {
     if (!response.ok) {
       const errorData = await response.text();
       console.error("Gemini API error:", errorData);
+      console.error("Response status:", response.status);
+      console.error("Request contents:", JSON.stringify(contents, null, 2));
       return new Response(
-        JSON.stringify({ error: "Failed to get response from AI" }),
+        JSON.stringify({ 
+          error: "Failed to get response from AI", 
+          details: errorData,
+          status: response.status 
+        }),
         {
           status: 500,
           headers: {

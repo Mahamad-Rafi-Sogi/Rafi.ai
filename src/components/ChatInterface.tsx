@@ -102,6 +102,7 @@ export function ChatInterface() {
 
       console.log('Making request to:', apiUrl);
       console.log('Token:', token ? 'Present' : 'Missing');
+      console.log('Conversation history:', conversationHistory);
 
       // Create AbortController for timeout
       const controller = new AbortController();
