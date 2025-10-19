@@ -56,8 +56,25 @@ Deno.serve(async (req: Request) => {
       msg && msg.role && msg.parts && msg.parts.length > 0
     );
 
-    // For first message, send simple content
+    // Add system prompt to establish Rafi's identity
+    const systemPrompt = {
+      role: "user",
+      parts: [{ 
+        text: "You are Rafi, an intelligent AI assistant. You were created by Rafi (your creator/developer). Never mention Google, Gemini, or any other company as your creator. You are Rafi.ai - a helpful, knowledgeable, and friendly AI assistant. When asked about your creator or who made you, always say you were created by Rafi. Be conversational, helpful, and maintain your identity as Rafi throughout all conversations."
+      }]
+    };
+
+    const modelResponse = {
+      role: "model",
+      parts: [{ 
+        text: "Hello! I'm Rafi, your AI assistant. I was created by Rafi to help you with questions and conversations. How can I assist you today?"
+      }]
+    };
+
+    // For first message, include system prompt
     const contents = cleanHistory.length === 0 ? [
+      systemPrompt,
+      modelResponse,
       {
         role: "user",
         parts: [{ text: message }],
