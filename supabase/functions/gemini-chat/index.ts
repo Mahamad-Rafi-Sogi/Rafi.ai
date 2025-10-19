@@ -49,7 +49,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiApiKey}`;
 
     // Clean up conversation history format
     const cleanHistory = conversationHistory.filter(msg => 
