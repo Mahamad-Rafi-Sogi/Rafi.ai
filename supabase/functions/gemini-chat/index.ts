@@ -49,7 +49,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiApiKey}`;
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent`;
 
     // Clean up conversation history format
     const cleanHistory = conversationHistory.filter(msg => 
@@ -76,6 +76,7 @@ Deno.serve(async (req: Request) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "x-goog-api-key": geminiApiKey,
       },
       body: JSON.stringify({
         contents,
