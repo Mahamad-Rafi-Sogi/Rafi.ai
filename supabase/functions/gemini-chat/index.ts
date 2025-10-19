@@ -51,8 +51,13 @@ Deno.serve(async (req: Request) => {
 
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
 
+    // Clean up conversation history format
+    const cleanHistory = conversationHistory.filter(msg => 
+      msg && msg.role && msg.parts && msg.parts.length > 0
+    );
+
     const contents = [
-      ...conversationHistory,
+      ...cleanHistory,
       {
         role: "user",
         parts: [{ text: message }],

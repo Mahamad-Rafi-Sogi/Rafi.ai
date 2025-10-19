@@ -102,7 +102,6 @@ export function ChatInterface() {
 
       console.log('Making request to:', apiUrl);
       console.log('Token:', token ? 'Present' : 'Missing');
-      alert('About to call AI API...');
 
       // Create AbortController for timeout
       const controller = new AbortController();
@@ -149,10 +148,10 @@ export function ChatInterface() {
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
         console.error('Request timeout - API call took too long');
-        alert('Request timeout. The AI service is taking too long to respond.');
+        console.error('Request timeout - API call took too long');
       } else {
         console.error('Error sending message:', error);
-        alert('Error sending message. Check console for details.');
+        console.error('Error sending message:', error);
       }
     }
 

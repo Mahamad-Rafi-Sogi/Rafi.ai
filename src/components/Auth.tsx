@@ -22,12 +22,16 @@ export function Auth() {
       return;
     }
 
-    const { error } = isSignUp
+    const result = isSignUp
       ? await signUp(email, password)
       : await signIn(email, password);
 
-    if (error) {
-      setError(error.message);
+    if (result.error) {
+      setError(result.error.message);
+    } else if (isSignUp) {
+      setError('');
+      // Show success message for sign up
+      console.log('Account created successfully');
     }
     setLoading(false);
   };
