@@ -4,12 +4,13 @@ import { ChatInput } from './ChatInput';
 import { Sidebar } from './Sidebar';
 import { supabase, Message } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Menu } from 'lucide-react';
 
 export function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
 
@@ -162,68 +163,78 @@ export function ChatInterface() {
   const handleNewConversation = () => {
     setCurrentConversationId(null);
     setMessages([]);
+    setSidebarOpen(false);
   };
 
   const handleConversationSelect = (id: string) => {
     setCurrentConversationId(id);
+    setSidebarOpen(false);
   };
 
   return (
-    <div className="flex h-screen bg-slate-900">
+    <div className="flex h-screen bg-slate-900 relative">
       <Sidebar
         currentConversationId={currentConversationId}
         onConversationSelect={handleConversationSelect}
         onNewConversation={handleNewConversation}
+        isOpen={sidebarOpen}
+        onToggle={() => setSidebarOpen(!sidebarOpen)}
       />
 
-      <div className="flex-1 flex flex-col">
-        <div className="border-b border-slate-700/50 bg-slate-800/50 backdrop-blur-xl p-4">
+      <div className="flex-1 flex flex-col min-w-0">
+        <div className="border-b border-slate-700/50 bg-slate-800/50 backdrop-blur-xl p-3 md:p-4">
           <div className="max-w-4xl mx-auto flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/30">
-              <Sparkles className="w-6 h-6 text-white" />
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden p-2 text-white hover:bg-slate-700 rounded-lg transition-colors"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/30">
+              <Sparkles className="w-4 h-4 md:w-6 md:h-6 text-white" />
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-white">Rafi AI Assistant</h1>
-              <p className="text-sm text-slate-400">Always here to help</p>
+            <div className="min-w-0">
+              <h1 className="text-lg md:text-xl font-bold text-white truncate">Rafi AI Assistant</h1>
+              <p className="text-xs md:text-sm text-slate-400 hidden sm:block">Always here to help</p>
             </div>
           </div>
         </div>
 
         <div className="flex-1 overflow-y-auto">
           {messages.length === 0 ? (
-            <div className="h-full flex items-center justify-center p-8">
-              <div className="text-center max-w-2xl">
-                <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-3xl mb-6 shadow-2xl shadow-blue-500/50">
-                  <Sparkles className="w-10 h-10 text-white" />
+            <div className="h-full flex items-center justify-center p-4 md:p-8">
+              <div className="text-center max-w-2xl w-full">
+                <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-3xl mb-4 md:mb-6 shadow-2xl shadow-blue-500/50">
+                  <Sparkles className="w-8 h-8 md:w-10 md:h-10 text-white" />
                 </div>
-                <h2 className="text-3xl font-bold text-white mb-4">Welcome to Rafi.ai</h2>
-                <p className="text-slate-400 text-lg mb-8">
-                  Your intelligent AI assistant powered by Google Gemini. Ask me anything, and I'll do my best to help!
+                <h2 className="text-2xl md:text-3xl font-bold text-white mb-3 md:mb-4">Welcome to Rafi.ai</h2>
+                <p className="text-slate-400 text-base md:text-lg mb-6 md:mb-8 px-4">
+                  Your intelligent AI assistant. Ask me anything, and I'll do my best to help!
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 text-left">
                   {[
                     { title: 'Get Answers', desc: 'Ask questions and get detailed responses' },
                     { title: 'Creative Help', desc: 'Generate ideas, stories, and content' },
                     { title: 'Learn & Explore', desc: 'Discover new topics and concepts' },
                     { title: 'Problem Solving', desc: 'Get help with coding, math, and more' },
                   ].map((item, i) => (
-                    <div key={i} className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4 hover:bg-slate-800 transition-all">
-                      <h3 className="text-white font-semibold mb-1">{item.title}</h3>
-                      <p className="text-slate-400 text-sm">{item.desc}</p>
+                    <div key={i} className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-3 md:p-4 hover:bg-slate-800 transition-all">
+                      <h3 className="text-white font-semibold mb-1 text-sm md:text-base">{item.title}</h3>
+                      <p className="text-slate-400 text-xs md:text-sm">{item.desc}</p>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
           ) : (
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-4xl mx-auto px-2 md:px-4">
               {messages.map((message) => (
                 <ChatMessage key={message.id} role={message.role} content={message.content} />
               ))}
               {loading && (
-                <div className="flex gap-4 p-6 bg-slate-800/30 animate-fade-in">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/30">
-                    <Sparkles className="w-5 h-5 text-white animate-pulse" />
+                <div className="flex gap-3 md:gap-4 p-4 md:p-6 bg-slate-800/30 animate-fade-in">
+                  <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/30">
+                    <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-white animate-pulse" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium text-slate-300 mb-1">Rafi</div>

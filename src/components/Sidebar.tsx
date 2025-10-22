@@ -7,11 +7,12 @@ interface SidebarProps {
   currentConversationId: string | null;
   onConversationSelect: (id: string) => void;
   onNewConversation: () => void;
+  isOpen?: boolean;
+  onToggle?: () => void;
 }
 
-export function Sidebar({ currentConversationId, onConversationSelect, onNewConversation }: SidebarProps) {
+export function Sidebar({ currentConversationId, onConversationSelect, onNewConversation, isOpen = false, onToggle }: SidebarProps) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
   const { signOut, user } = useAuth();
 
   useEffect(() => {
@@ -49,18 +50,18 @@ export function Sidebar({ currentConversationId, onConversationSelect, onNewConv
   const handleNewConversation = () => {
     onNewConversation();
     loadConversations();
-    setIsOpen(false);
+    if (onToggle) onToggle();
   };
 
   const handleSelectConversation = (id: string) => {
     onConversationSelect(id);
-    setIsOpen(false);
+    if (onToggle) onToggle();
   };
 
   return (
     <>
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => onToggle && onToggle()}
         className="lg:hidden fixed top-4 left-4 z-50 bg-slate-800 text-white p-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors"
       >
         {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -141,7 +142,7 @@ export function Sidebar({ currentConversationId, onConversationSelect, onNewConv
       {isOpen && (
         <div
           className="lg:hidden fixed inset-0 bg-black/50 z-30"
-          onClick={() => setIsOpen(false)}
+          onClick={() => onToggle && onToggle()}
         />
       )}
     </>
